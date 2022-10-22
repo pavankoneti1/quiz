@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>subjects</title>
+</head>
+<body>
+<!--{{subjects|join:"&#45;&#45;"}}-->
+{% if subjects|length > 0 %}
+{% for i in subjects%}
+<a href="{% url 'filter_data' i.subject %}">{{i.subject}}</a><br>
+{%endfor%}<br><br>
+{%else%}
+none
+{% endif %}
+<form action="addsub/">
+    <button type="submit" >add subject</button>
+</form>
+</body>
+</html>

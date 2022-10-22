@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>register</title>
+</head>
+<body>
+<form method="post">
+    {%csrf_token%}
+    {{ form.errors }}
+{{ form.non_field_errors }}
+  {{form.as_p}}<br>
+    <input type="submit">
+</form>
+</body>
+</html>
