@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>staff page</title>
+</head>
+<body>
+<form action="{% url 'createsub' %}">
+    {% csrf_token %}
+    <button type="submit">create subject</button>
+</form>
+<br>
+<form action="{% url 'evaluator' %}">
+        {% csrf_token %}
+    <button type="submit">atttempt quiz</button>
+</form>
+<br>
+<form action="{% url 'precreator' %}">
+        {% csrf_token %}
+    <button type="submit">create questions</button>
+    <br><br><br>
+<button formaction="/quiz/logout/">logout</button>
+</form>
+
+</body>
+</html>

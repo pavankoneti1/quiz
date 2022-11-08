@@ -13,10 +13,16 @@
     <!--    {{users}}-->
     {% csrf_token %}
     {{form.as_p}}
-
-    <input type="submit" value="submit">
-
+<!--    <input type="submit" value="submit">-->
+    <button type="reset">clear</button>
+    <button type="submit" formaction="/quiz/disp/{{key}}/{{sub}}/">save&create new</button>
+<br><br>
 </form>
+<form method='post' action="/quiz/disp/None/None/">
+        {% csrf_token %}
+    <input type="submit" value="exit" name="but">
+</form>
+
 {{ques}}
 </body>
 </html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>evaluator</title>
+</head>
+<body>
+<p style="color:red">{{warning}}</p>
+
+<form method="post">
+    {% csrf_token %}
+    subject:{{form.sub}}<br>
+    private:<input type="checkbox" name="private"><br>
+    key:<input type="text" name="key" placeholder="min 4 chars"><br>
+    {% if create %}
+        <button type="submit" >create</button>
+    {% else %}
+    <button type="submit">start</button>
+    {% endif %}
+</form><br>
+<form method='post' action="/quiz/disp/None/None/">
+        {% csrf_token %}
+    <input type="submit" value="back" name="but">
+    <br><br><br>
+<button formaction="/quiz/logout/">logout</button>
+</form>
+</body>
+</html>

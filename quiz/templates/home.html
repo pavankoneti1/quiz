@@ -10,9 +10,14 @@ login
     <p style="color:red">{{error}}</p>
   <form method="post">
           {%csrf_token%}
-      {{ form.errors }}
-{{ form.non_field_errors }}
-          {{form}}
+      {% if  form.errors %}
+      <h1>error</h1>
+      {% endif %}
+      <h1>log {{form.errors}} in</h1>
+{%if form.non_field_errors %}
+      <h2>2nd error</h2>
+    {% endif %}
+          {{form.as_p}}
       <input type="submit" name="login">
   </form>
 <p>new user?<a href="{% url 'register' %}">register</a></p>

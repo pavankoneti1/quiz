@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('log/', include('login_system.urls')),
     path('quiz/', include('app.urls')),
+    path('timer/', include('timer.urls')),
 ]

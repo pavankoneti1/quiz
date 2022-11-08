@@ -11,11 +11,12 @@ def create_user(request):
     # User.objects.all().delete()
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
-        print(form.is_valid())
         if form.is_valid():
             u = request.POST.get('username')
             p = request.POST.get('password')
-            User.objects.create_user(username=u, password=p)
+            user = User.objects.create_user(username=u, password=p)
+            user.save()
+            print(user)
             return HttpResponseRedirect('/log/user')
         # return render(request, 'register.html', {'form':form})
 
@@ -27,24 +28,24 @@ def login_system(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, request.POST)
         # form = AuthForm(request.POST)
-        print(form.is_valid())
+        # print(form.is_valid())
         # print(AuthenticationForm())
-        if form.is_valid():
-            u = request.POST.get('username')
-            p = request.POST.get('password')
-            user = authenticate(request, username = u, password = p)
-            print(user)
-            if user is not None:
-                login(request, user)
-                return render(request, 'user_page.html')
-            else:
-                form = AuthForm()
-                return render(request, 'home.html', {'form':form})
+        # if form.is_valid():
+        u = request.POST.get('username')
+        p = request.POST.get('password')
+        user = authenticate(request, username = u, password = p)
+        print(authenticate())
+        if user is not None:
+            login(request, user)
+            return render(request, 'user_page.html')
+        else:
+            form = AuthForm()
+            return render(request, 'home.html', {'form':form})
         # return render(request, 'home.html', {'form': AuthenticationForm()})
     return render(request, 'home.html', {'form':AuthenticationForm()})
 
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.forms import UserCreationForm
+# from django.contrib.auth import authenticate, login
+# from django.contrib.auth.forms import UserCreationForm
 
 
 # def signup(request):

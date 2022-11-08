@@ -5,7 +5,12 @@ from .models import *
 class Form(ModelForm):
     class Meta():
         model = Questions
-        fields = '__all__'
+        fields = ('question', 'option1', 'option2', 'option3', 'option4', 'answer')
+
+class EvaluatorForm(ModelForm):
+    class Meta:
+        model = Questions
+        fields = ('sub',)
 
 class Users(ModelForm):
     class Meta:

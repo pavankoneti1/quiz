@@ -5,14 +5,9 @@
     <title>test</title>
 </head>
 <body>
+<!--{{ items|slice:":1" }}-->
 {%for i in items%}
 {{i}}<br><br>
-{%endfor%}
-<!--{% for i in items%}-->
-<!--&lt;!&ndash;{{i}}&ndash;&gt;-->
-<!--{% for j in i|slice:":1"  %}-->
-<!--{{j}}-->
-<!--{% endfor %}<br>-->
-<!--{%endfor%}-->
+{% endfor %}
 </body>
 </html>

@@ -6,15 +6,19 @@
 </head>
 <body>
 <!--{{subjects|join:"&#45;&#45;"}}-->
+<form method="post">
 {% if subjects|length > 0 %}
-{% for i in subjects%}
-<a href="{% url 'filter_data' i.subject %}">{{i.subject}}</a><br>
-{%endfor%}<br><br>
-{%else%}
-none
+    {% for i in subjects%}
+        <input type="checkbox" value="{{i.subject}}" name="subject">{{i.subject}}</input>
+        private:<input type="checkbox" name="check"><br>
+    {%endfor%}<br><br>
+
 {% endif %}
-<form action="addsub/">
-    <button type="submit" >add subject</button>
+    <button type="submit">attempt</button>
+    <form method="post" action="/addsub/">
+        {% csrf_token %}
+            <input type="submit">
+    </form>
 </form>
 </body>
 </html>
