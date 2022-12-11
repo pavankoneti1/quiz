@@ -1,8 +1,10 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 # Create your models here.
 class Subjects(models.Model):
     subject = models.CharField(max_length=20, primary_key= True, name='subject')
+    # subject = models.CharField(max_length=20, name='subject')
+
     def __str__(self):
         return f'{self.subject}'
 
@@ -18,3 +20,11 @@ class Questions(models.Model):
     public = models.BooleanField(default=True, name='public')
     key = models.CharField(max_length=6, null=True, blank=True, name='key')
 
+class Results(models.Model):
+    name = models.ForeignKey(User, on_delete=models.CASCADE, name='name')
+    sub = models.ForeignKey(Subjects, on_delete=models.CASCADE, name='subject')
+    attemted_on = models.DateField(auto_now=True, name='attempted_on')
+    score = models.IntegerField(null=False, name='score')
+
+    class Meta():
+        ordering = ['-attempted_on']

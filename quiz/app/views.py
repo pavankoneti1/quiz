@@ -10,11 +10,7 @@ from .models import *
 from .forms import *
 # Create your views here.
 
-# def login_required(func):
-#     if user.is_authenticated():
-#         return func
-#     return home
-
+@csrf_exempt
 def home(request):
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
@@ -23,7 +19,7 @@ def home(request):
             p = request.POST['password']#.get('password')
             user = authenticate(username = u, password = p)
             if user.is_staff and user is not None:
-                print("---------------'i'm here")
+                login(request, user)
                 return render(request, 'staff page.html')
             if user is not None:
                 login(request, user)
@@ -65,7 +61,7 @@ def evaluator(request):
             return HttpResponseRedirect(f'/quiz/attempt/{key}/{sub}/')
         key = 'public' if key== '' else key
 
-        return HttpResponseRedirect(f'/quiz/attempt/public/{sub}/')
+        return HttpResponseRedirect(f'/quiz/seltitle/public/{sub}/')
     return render(request, 'evaluator.html', {'form':form})
 
 def subjects(request):
@@ -80,7 +76,6 @@ def subjects(request):
 
 # @login_required
 def create_subject(request):
-    print(request.user, 'hi')
         # print('yes\n')
     if request.method == 'POST':
         s = request.POST.get('subject')
@@ -88,12 +83,10 @@ def create_subject(request):
         return render(request, 'staff page.html')
     return render(request, 'add_sub.html')
 
-def filter_data(request, data):
-    s = User.objects.filter(is_staff=True).values()
-    if request.method == 'POST':
-        check = request.POST.get('check')
-        if check == 'on':
-            pass
+def filter_result(request):
+    s = Questions.objects.all().values()
+    # s = ResultForm()
+    print(s)
 
     return render(request, 'quiz.html', {'items':s})
 
@@ -104,20 +97,20 @@ def pre_creator(request):
         key = request.POST.get('key').strip()
         is_private = request.POST.get('private')
         sub = request.POST.get('sub')
+        title = request.POST.get('title')
 
         if is_private == 'on' and (key == '' or len(str(key)) != 4):
             return render(request, 'evaluator.html', {'warning': 'enter the key(max legnth 4)', 'form': form})
         elif len(str(key)) > 0:
             return render(request, 'evaluator.html', {'warning': 'check the "is private"', 'form': form})
         key = 'public' if key == '' else key
-        return HttpResponseRedirect(f'/quiz/disp/{key}/{sub}/')
+        return HttpResponseRedirect(f'/quiz/disp/{key}/{sub}/{title}/')
     return render(request, 'evaluator.html', {'form':EvaluatorForm, 'create':1})
 
 @login_required
-def create_question(request, key, sub):
+def create_question(request, key, sub, title):
     form = Form()
     if request.method == 'POST':
-        print('----------hi')
         q = request.POST.get('question')
         o1 = request.POST.get('option1')
         o2 = request.POST.get('option2')
@@ -136,61 +129,79 @@ def create_question(request, key, sub):
             '4' :o4,
         }
         ans = d[ans]
-        Questions.objects.create(sub_id=sub, question = q, option1=o1, option2=o2, option3=o3, option4=o4, public = p, key=key)
-        return render(request, 'users_list.html', {'form': form, 'key':key, 'sub':sub})
-    return render(request, 'users_list.html', {'form': form, 'key':key, 'sub':sub})
+        Questions.objects.create(sub_id=sub, question = q, option1=o1, option2=o2, option3=o3, option4=o4, answer=ans, public = p, key=key, title=title)
+        return render(request, 'users_list.html', {'form': form, 'key':key, 'sub':sub, 'title':title})
+    return render(request, 'users_list.html', {'form': form, 'key':key, 'sub':sub, 'title':title})
+
+def select_title(request, sub=None,  key=None):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        return HttpResponseRedirect(f'/quiz/attempt/{key}/{sub}/{title}/')
+
+    title = Questions.objects.filter(sub_id=sub).values('title').distinct()
+    return render(request, 'title.html', {'title': title, 'sub': sub, 'key': key})
+
 
 @login_required
 @csrf_exempt
-def attempt_quiz(request, sub=None,  key=None):
-    print(key)
-    questions = Questions.objects.filter(key=key).values()
+def attempt_quiz(request, sub=None,  key=None, title=None):
+    # questions = Questions.objects.filter(key=key).values()
     if key == 'public':
-        if request.method == 'POST':
-            title = request.POST.get('title')
+        # if request.method == 'POST':
+            # title = request.POST.get('title')
             questions = Questions.objects.filter(sub_id=sub, title=title, key='public').values()
+            length = len(questions)
+            submitted = request.POST.get('submit')
+            if submitted == 'Submit':
+                res = []
+                for i in range(length):
+                    ans = 'q' + str(i + 1)
+                    print(ans, request.POST.get(ans))
+                    res.append(request.POST.get(ans))
+                score = evaluate(res, list(questions))
+                print(res, questions)
+                user_id = User.objects.get(id=request.user.id)
+                sub_id = Subjects.objects.get(subject=sub)
+                res1 = Results.objects.create(name=request.user, score=score, subject=sub_id)
+                return render(request, 'user_page.html', {'score': score, 'length':length})
+
             if len(questions)>0:
-                submitted = request.POST.get('submit')
-                if submitted == 'Submit':
-                    res = []
-                    for i in range(len(questions)):
-                        ans = 'q' + str(i + 1)
-                        res.append(request.POST.get(ans))
-                    score = evaluate(res, list(questions))
-                    return render(request, 'user_page.html', {'score': score})
                 return render(request, 'user_page.html', {'ques': questions, 'count':len(questions)})
             return render(request, 'user_page.html', {'error':'no questions to display'})
-        else:
-            title = Questions.objects.filter(sub_id=sub).values('title', 'sub_id')
-            return render(request, 'title.html', {'title':title})
-
+        # else:
+        #     return HttpResponseRedirect(f'/quiz/seltitle/{key}/{sub}/')
     questions = Questions.objects.filter(sub_id='sub', key=key).values()
+    length = len(questions)
+    submitted = request.POST.get('submit')
+    if submitted == 'Submit':
+        res = []
+        for i in range(length):
+            ans = 'q' + str(i + 1)
+            res.append(request.POST.get(ans))
+        score = evaluate(res, list(questions))
+        return render(request, 'user_page.html', {'score': score, 'length':length})
+
     if len(questions)>0:
-        submitted = request.POST.get('submit')
-        if submitted == 'Submit':
-            res = []
-            for i in range(len(questions)):
-                ans = 'q' + str(i + 1)
-                res.append(request.POST.get(ans))
-            score = evaluate(res, list(questions))
-            return render(request, 'user_page.html', {'score': score})
         return render(request, 'user_page.html', {'ques': questions, 'count': len(questions)})
     return render(request, 'user_page.html', {'error':'no questions to display'})
 
 # @login_required
+@csrf_exempt
 def tester(request):
-    print(request.user.is_authenticated)
-    # items = User.objects.values_list('id', 'username', 'key')
-    items = Questions.objects.filter(sub_id='maths').values('key')
-    # print(type(items[0][0]))
-    return render(request, 'tester.html', {'items':items})
-
-def updater(request):
-    q = Questions.objects.get(id=1)#.update(key = '1234')
-    q.key = '1234'
-    q.save()
-    return HttpResponseRedirect('/quiz/test/')
-
+    res = User.objects.get(id = request.user.id)
+    print(res)
+    res1 = Results.objects.create(name=res, score=20)
+    items = Results.objects.all().values()
+    if request.method == 'POST':
+        form = ResultForm()
+        print('---------------')
+        n = request.POST.get('name')
+        s = request.POST.get('score')
+        print(n,s)
+    # print(res)
+    form = ResultForm()
+    items = User.objects.get(id=24)
+    return render(request, 'tester.html', {'items':items, 'form':form})
 
 def evaluate(result_array, q_list):#result_array, q_list):
     # result_array = ['1','3','4']

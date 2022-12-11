@@ -5,9 +5,18 @@
     <title>test</title>
 </head>
 <body>
+{{items}}
 <!--{{ items|slice:":1" }}-->
-{%for i in items%}
-{{i}}<br><br>
-{% endfor %}
+<!--{%for i in items%}-->
+<!--{{i}}<br><br>-->
+<!--{% for j in i %}-->
+<!--{{j.title}}-->
+<!--{% endfor %}-->
+<!--{% endfor %}-->
+<form method="post">
+    {{form.as_p}}
+    <input type="submit">
+</form>
 </body>
 </html>
+

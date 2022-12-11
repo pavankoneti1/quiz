@@ -9,6 +9,11 @@
 
 <form method="post">
     {% csrf_token %}
+
+    {% if create %}
+    <p>Title*:<input type="text" name="title" required></p>
+    {% endif %}
+
     subject:{{form.sub}}<br>
     private:<input type="checkbox" name="private"><br>
     key:<input type="text" name="key" placeholder="min 4 chars"><br>
@@ -18,7 +23,7 @@
     <button type="submit">start</button>
     {% endif %}
 </form><br>
-<form method='post' action="/quiz/disp/None/None/">
+<form method='post' action="/quiz/">
         {% csrf_token %}
     <input type="submit" value="back" name="but">
     <br><br><br>

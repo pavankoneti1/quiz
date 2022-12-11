@@ -16,3 +16,8 @@ class Users(ModelForm):
     class Meta:
         model = User
         fields = '__all__'
+
+class ResultForm(ModelForm):
+    class Meta:
+        model = Results
+        fields = "__all__"

@@ -6,10 +6,11 @@
 </head>
 <body>
 <form method="post">
+    {% csrf_token %}
   {% for i in title %}
     <p><input type="radio" name="title" value="{{i.title}}">{{i.title}}</p>
     {% endfor %}
-    <input type="submit">
+    <input type="submit" formaction="">
 </form>
 </body>
 </html>

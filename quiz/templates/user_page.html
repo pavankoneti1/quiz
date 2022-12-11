@@ -5,7 +5,6 @@
     <title>user page</title>
 </head>
 <body>
-<center> {{score}}</center>
 
 {{error}}
 {% if count %}
@@ -16,10 +15,11 @@
     {% csrf_token %}
     {% for q in ques %}
    question: {{q.question}}<br>
-   <input type="radio" name="q{{forloop.counter}}" value="1">option1: {{q.option1}} <br>
-   <input type="radio" name="q{{forloop.counter}}" value="2">option2: {{q.option2}}<br>
-   <input type="radio" name="q{{forloop.counter}}" value="3">option3: {{q.option3}}<br>
-   <input type="radio" name="q{{forloop.counter}}" value="4">option4: {{q.option4}}<br>
+   <input type="radio" name="q{{forloop.counter}}" value="{{q.option1}}">option1: {{q.option1}} <br>
+   <input type="radio" name="q{{forloop.counter}}" value="{{q.option2}}">option2: {{q.option2}}<br>
+   <input type="radio" name="q{{forloop.counter}}" value="{{q.option3}}">option3: {{q.option3}}<br>
+   <input type="radio" name="q{{forloop.counter}}" value="{{q.option4}}">option4: {{q.option4}}<br>
+    q{{forloop.counter}}
             {%endfor%}
 <input type="submit" name="submit"  ><input type="reset" value="clear"><br><br>
 {% endif %}
@@ -28,7 +28,7 @@
     {% endif %}
 
         {%if score %}
-    <center><h1>{{score}}</h1></center>
+    <center><h1>no.of questions: {{length}}<br>score:{{score}}</h1></center>
 {% endif %}
 </form>
 </body>

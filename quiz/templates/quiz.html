@@ -5,6 +5,9 @@
     <title>quiz</title>
 </head>
 <body>
-{{items}}
+{% for i in items %}
+{{i}}
+{% endfor %}
+<!--{{items.as_p}}-->
 </body>
 </html>

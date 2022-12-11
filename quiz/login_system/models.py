@@ -1,12 +1,11 @@
 from django.db import models
 
 # Create your models here.
-class Users(models.Model):
-    first=models.CharField(max_length=20,name='first')
-    last=models.CharField(max_length=20,name='last', null=True)
-    email = models.EmailField(name='email')
-    password = models.CharField(max_length=20, name='passeword')
+from django.contrib.auth.models import User
 
-class LoginForm(models.Model):
-    username = models.CharField(max_length=20, name='username')
-    password = models.CharField(max_length=20, name='passeword')
+class Profile(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    age = models.IntegerField(default='default.jpg')
+
+    def __str__(self):
+        return f'{self.user.username} Profile'
